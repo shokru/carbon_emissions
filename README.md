@@ -1,2 +1,198 @@
-# carbon_emissions
-A project that analyses recent carbon emissions worldwide, with links to energy consumption & GDP output.
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "E4_master.ipynb",
+      "provenance": [],
+      "collapsed_sections": [],
+      "authorship_tag": "ABX9TyN0m4bV9rvlC5PalXItCqbU",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/shokru/carbon_emissions/blob/main/E4_master.ipynb\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "PC3fD_QyvX1x"
+      },
+      "source": [
+        "Overview of a crash course on the 4Es:\n",
+        "# Energy, Emissions, Economy & Environment\n",
+        "\n",
+        "## Overview\n",
+        "This notebook is the central document of a course dedicated to the impact of **economic activities** on **global warming**.   \n",
+        "It's purpose, by design and function, is purely **pedagogical**.  \n",
+        "It aims to provide open source material and analysis on the links between **human production** (which relies heavily on energy consumption), greenhouse gas (GHG) **emissions** and **temperature** trends over the past years and decades.  \n",
+        "Basically, the process we follow is based on the scheme below which summarizes the  relationships between the variables of interest.  \n",
+        "The **causality** of the relations is more or less debated. \n",
+        "\n",
+        "\n",
+        "<img src=http://www.gcoqueret.com/files/misc/carbon/carbon_scheme.png width=\"860\"/>\n",
+        "\n",
+        "\n",
+        "The **scientific consensus** is now that <a href=\"https://climate.nasa.gov/scientific-consensus/\" target=\"_blank\">temperatures are rising</a> and that <a href=\"https://en.wikipedia.org/wiki/Scientific_consensus_on_climate_change\" target=\"_blank\">climate change is anthropogenic</a>, i.e., largely a consequence of human activities.   \n",
+        "The most detailed views on the topic are published every 5-7 years in a report by the Intergovernmental Panel on Climate Change (<a href=\"https://www.ipcc.ch/\" target=\"_blank\">IPCC</a>).  \n",
+        "The [latest release of the report](https://www.ipcc.ch/report/ar6/wg1/) is very recent (2021)."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "i-qS2eJYBn8y"
+      },
+      "source": [
+        "## Notebook structure\n",
+        "\n",
+        "<img align=right src=http://www.gcoqueret.com/files/misc/carbon/carbon_summary.png width=\"600\"/>\n",
+        "\n",
+        "The material consists mainly of Jupyter Notebooks (like this one, with an *.ipynb* extension) publicly hosted on the **Google Colab** platform. This allows everyone to run the code online and to perform custom analyses (e.g., on particular countries or sectors).   \n",
+        "In order to simplifiy the content of the notebooks (e.g., not having too many variables), the analysis was split in blocks.  \n",
+        "Each block is focused on the link between two types of variables (see diagram on the right). \n",
+        "The links to these **notebooks** (the heart of the course) can be found below:\n",
+        "\n",
+        "\n",
+        "- [energy and the econoomy (GDP)](https://colab.research.google.com/drive/1SD4wmbI5REYrwXP-npuMEmo3WUDtpKhS?usp=sharing) \n",
+        "- [energy and emissions (carbon and GHG)](https://colab.research.google.com/drive/1cGvqbKHAnQxKx-chVqppkDu93th50YPN?usp=sharing)\n",
+        "- [economy and emissions](https://colab.research.google.com/drive/1O3rVphHenJkcx5J1gYhBm0TMtOFMvWY6?usp=sharing)    \n",
+        "- [economy and temperature](https://colab.research.google.com/drive/1j7B-hCNkZAwzfTp7G0LPwb1THnzk4EnG?usp=sharing)\n",
+        "\n",
+        "The last notebook includes a test for **Granger causality**.   \n",
+        "All of the material of the course can also be accessed on [Github](https://github.com/shokru/carbon_emissions), but in this case, the code cannot be executed.\n",
+        "\n",
+        "\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "8Hik0ZCaDZBK"
+      },
+      "source": [
+        "## The Kaya identity\n",
+        "\n",
+        "We then spend some time on an important rerepsentation that helps understand **how** we can reduce emissions, i.e., which are the very simple macro channels that are at stake.  \n",
+        "The **Kaya identity** was developed by Japanese economists Yoichi Kaya and Keiichi Yokobori in the 1990s. Its purpose is to decompose $CO_2$ emissions into simple chain blocks that are responsible for them. Its statement is:\n",
+        "\n",
+        "\n",
+        "<img align=right src=http://www.gcoqueret.com/files/misc/carbon/Kaya_estimates.png width=\"550\"/>\n",
+        "\n",
+        "$CO_2=POP \\times \\frac{GDP}{POP} \\times \\frac{E}{GDP} \\times \\frac{CO_2}{E},$  \n",
+        "where $E$ is energy, $GDP$ is economic output and $POP$ is population. Thus:  \n",
+        "- $\\frac{CO_2}{E}$ is how much $CO_2$ we need to produce a given amount of energy;  \n",
+        "- $\\frac{E}{GDP}$ is how much energy we need to create economic values;  \n",
+        "- $\\frac{GDP}{POP}$, GDP per capita, is a proxy for aggregate standard of living.  \n",
+        "\n",
+        "\n",
+        "Therefore, mechanically, if we want to **reduce emissions**, we have to curtail one or several of these terms. Here are some comments:\n",
+        "\n",
+        "- $\\frac{CO_2}{E}$: this requires for instance shifting energy production to non carbon-based sources (nuclear, renewables);  \n",
+        "- $\\frac{E}{GDP}$: this means being able to produce more efficiently, with lower energy input;  \n",
+        "- $\\frac{GDP}{POP}$: this implies to accept possibly lower standards of living (e.g., travelling less, eating less meat, buying fewer clothes, etc. - consuming less in short);\n",
+        "- $POP$: this one is easy to understand...\n",
+        "\n",
+        "It is interesting to compare the terms of the identity across countries.  \n",
+        "This is done in the following [Colab notebook](https://colab.research.google.com/drive/1x-ankn-VKVes5BXU3UC6nIvkh48-__De?usp=sharing) from which the graph comes.  \n",
+        "\n",
+        "The [Shift DataPortal](https://www.theshiftdataportal.org/climate/kaya?chart-type=line&chart-types=line&group-names=World&is-range=true&dimension=total&end=2015&start=1980) proposes a dynamic view of these quantities, aggregated at the world scale. \n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "jjf1QqOyMtgV"
+      },
+      "source": [
+        "## The DICE mode of Nordhaus\n",
+        "\n",
+        "William Nordhaus was one of the two recipients of the **<a href=\"https://www.nobelprize.org/prizes/economic-sciences/2018/summary/\" target=\"_blank\">2018 Nobel Prize in Economics</a>**.[^1]   \n",
+        "He was rewarded for his work on the relationship between the economy and global warming.   \n",
+        "He \"invented\" the **DICE model** (Dynamic Integrated model of Climate and the Economy), which we briefly summarize below.\n",
+        "\n",
+        "[^1]: In 2021, **<a href=\"https://www.nobelprize.org/prizes/physics/2021/summary/\" target=\"_blank\">two Nobel Prize recepients in Physics</a>** (Syukuro Manabe and Klaus Hasselmann) were rewarded for their work on modelling climate change. \n",
+        "\n",
+        "There are many variations around climate-sensitive economic models.   \n",
+        "The one we outline below is that of [Revisiting the social cost of carbon](https://www.pnas.org/content/114/7/1518) - by Nordhaus.   \n",
+        "Its presentation does not go into all the details.  \n",
+        "The model can be broken down into several modules.   \n",
+        "### Economy\n",
+        "The first is the economy and the important aggregate quantity is global welfare:\n",
+        "$$W=\\sum_{t=1}^T U(c_t)L_tR_t,$$\n",
+        "where:\n",
+        "- $U$ is a **utility function** (often taken to be of CRRA type: $U(c)=u^{1-\\alpha}/(1-\\alpha)$),   \n",
+        "- $c_t$ is **per-capita consumption**,  \n",
+        "- $L_t$ is **population** (labor), and  \n",
+        "- $R_t=(1+\\rho)^{-t}$ is the **discount factor on welfare** ($\\rho$ being the pure rate of social time preference, often taken to be between 0% and 3%).  \n",
+        "Moreover, **net output** $Q_t$ is equal to total consumption $C_t=c_tL_t$ plus **gross investment** $I_t$, i.e., $Q_t=C_t+I_t$, which is also equal to\n",
+        "$$Q_t=\\Omega_t(1-\\Lambda_t)Y_t,$$\n",
+        "where $Y_t$ is *gross* output and $\\Omega_t$ is a **damage function**. Moreover, $\\Lambda_t$ is a **abatement-cost function**. This implies that we try to mitigate the harm we make to the environment, but this has a cost. \n",
+        "\n",
+        "These elements are found in the left (blue) part of the diagram below.\n",
+        "\n",
+        "<img src=http://www.gcoqueret.com/files/misc/carbon/DICE.png width=\"800\"/>\n",
+        "\n",
+        "### The damage function\n",
+        "\n",
+        "The equation above is important because it determines the joint effect of **damages** to the economy ($\\Omega_t$) generated by climate imbalance **and** the cost of the effort to try to mitigate them ($\\Lambda_t$). \n",
+        "For simplicity, the cost of global warming is a quadratic function of temperature change, which we write $TAT_t$:\n",
+        "$$\\Omega_t=\\psi_1 TAT_t + \\psi_2TAT_t^2.$$\n",
+        "Of course the second term has crucial implications: it implies that the impact of temperature changes on damages is **not** linear.\n",
+        "\n",
+        "### The environment\n",
+        "\n",
+        "Finally, the last block of the model pertains to the dynamics of climate. The main driver of global warming is the emission of carbon gases. In the model, total CO$_2$ emissions are written $E_t$ and they are an affine function of gross output $Y_t$:\n",
+        "\n",
+        "$$E_t=\\sigma_t(1-\\mu_t)Y_t+E_t^{\\text{exo}},$$\n",
+        "\n",
+        "where $\\sigma_t$ is carbon intensity, $\\mu_t$ is the emissions-reduction rate, and $E_t^{\\text{exo}}$ stands for exogenous land emissions. The DICE model then has a climate component that maps the carbon emissions $E_t$ into global temperature changes:\n",
+        "\n",
+        "$$ TAT_t=f(E_t, TAT_{t-1}, Z), $$\n",
+        "\n",
+        "where $Z$ are other variables, including greenhouse gas emissions, radiative forcings, and ocean temperatures.\n",
+        "\n",
+        "### Social cost of carbon\n",
+        "\n",
+        "The Social Cost of Carbon (SCC) is formally defined as: \n",
+        "\n",
+        "\n",
+        "$$SCC = \\frac{\\frac{\\partial W}{\\partial E_t}}{\\frac{\\partial W}{\\partial C_t}}=\\frac{\\partial C_t}{\\partial E_t},$$\n",
+        "\n",
+        "i.e., the ratio of the marginal welfare impact of time-$t$ emissions to the marginal welfare impact of a unit of time-$t$ aggregate consumption. The second equality simplifies this to the economic impact of a unit of emissions in terms of consumption. The SCC can typically be expressed in dollars (numerator) per metric tons of CO$_2$ (denominator). Given the large number of variables entering the model, differences in estimates yield various outcomes, and SCCs are documented to vary across time (moments when calibrations are performed) and models.\n",
+        "\n",
+        "\n",
+        "### Implementation\n",
+        "\n",
+        "The DICE model is hard to code! Luckily, a few researchers have done the job for us. \n",
+        "One example is provided in this [Colab notebook](https://colab.research.google.com/drive/1QE2_olK323g1JFECnOJUv2PZMqQfVSJn?usp=sharing).\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "3yurwhwLqzCl"
+      },
+      "source": [
+        ""
+      ]
+    }
+  ]
+}
